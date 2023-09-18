@@ -1,0 +1,18 @@
+
+data("cbt")
+
+
+
+
+recosinor.fit <- recosinor(cbt ~ hrs, cbt, tau = c(24,40), k = 10)
+
+
+cbt$cbt_pred <- predict(recosinor.fit)
+
+
+ggplot(cbt) +
+  
+  geom_line(aes(x=hrs, y=cbt)) +
+  
+  geom_line(aes(x=hrs, y=cbt_pred), color="red")
+
