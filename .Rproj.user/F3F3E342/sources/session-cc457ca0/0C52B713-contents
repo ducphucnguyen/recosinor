@@ -1,8 +1,8 @@
 recosinor.plot <- function(recosinor.fit, data) {
 
 
-  library(pracma)
-  library(ggpubr)
+  #library(pracma)
+  #library(ggpubr)
 
 
   cbt_data$cbt_pred <- predict(recosinor.fit)
