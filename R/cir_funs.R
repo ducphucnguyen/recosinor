@@ -99,6 +99,29 @@ homonstatic_response <- function(opt_pars) {
 
 
 
+sleep_function <- function(data, shape=3, scale=2) {
+
+  # Find the indices where the binary column switches from 0 to 1
+  sleep_onset <- which(diff(data$sw) == 1)
+
+  # Find the indices where the binary column switches from 1 to 0
+  sleep_offset <- which(diff(data$sw) == -1)
+
+
+  s_time <- data$hrs[sleep_onset:sleep_offset] - data$hrs[sleep_onset]
+
+  data$s_response <- 0 # initialise s_response
+
+  data$s_response[sleep_onset:sleep_offset] <- dgamma(s_time, shape, scale)
+
+
+  return( data$s_response )
+
+}
+
+
+
+
 #### Recursive Cosinor function
 ## Test circadian function
 recosinor_func <- function(x, a1, a2,a3, k) {
@@ -264,23 +287,46 @@ homonstatic_response2 <- function(opt_pars) {
 
 
 
-recosinor <- function(formula, data, tau = 24, k = 10) {
-
-  dep_var <- as.character(formula[[2]])
-  indep_var <- as.character(formula[[3]])
-
-  # Extract the data from the data frame
-  dep_data <- data[[dep_var]]
-  indep_data <- data[[indep_var]]
-
-  # recosinor functions
-  x_terms <- recosinor_func2(indep_data, tau, k)
-
-  data$ysin <-  x_terms[["y_sin"]]
-  data$ycos <-  x_terms[["y_cos"]]
 
 
-  model_recosinor <- bam(dep_data ~ ycos + ysin , #
+recosinor <- function(formula, data, tau = 24, k = 10, shape=3, scale=2) {
+
+  s_variable <- sub("s\\((\\w+)\\)", "\\1", as.character(formula))
+
+  cbt <- s_variable[2]
+  hrs <- gsub(".*time\\((\\w+)\\).*", "\\1", s_variable[3])
+  sw <- gsub(".*sleep\\((\\w+)\\).*", "\\1", s_variable[3])
+
+  if (hrs == s_variable[3]) { # if this true mean no sleep input
+    cat("Please input time as time(hrs)")
+  } else{
+    # recosinor functions
+    x_terms <- recosinor_func2(data[[hrs]], tau, k)
+    data$ysin <-  x_terms[["y_sin"]]
+    data$ycos <-  x_terms[["y_cos"]]
+  }
+
+
+  if (sw == s_variable[3]) { # if this true mean no sleep input
+    sw <- NULL
+    cat("Analysing without sleep-wake effects")
+  } else{
+    data$sleep_response <- sleep_function(data, shape, scale)
+  }
+
+  if (!is.null(sw)) {
+    new_formula <- update(formula, . ~ . - time(hrs) - sleep(sw)
+                          + ysin + ycos + sleep_response)
+
+  } else {
+    new_formula <- update(formula, . ~ . - time(hrs) - sleep(sw)
+                          + ysin + ycos)
+  }
+
+
+
+
+  model_recosinor <- bam(new_formula, #
                            data = data,
                            family = gaussian() ) # model fit
 
