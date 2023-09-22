@@ -126,7 +126,87 @@ fREML = -2684.1  Scale est. = 0.018493  n = 4724
 
 ## Example: Optimising model parameters
 
-   
+
+In the previous example, only the circadian period was specified explicitly, while other model parameters used default values. However, optimizing key parameters can significantly improve the model fit. In the following code, we will optimize three crucial parameters:
+
+1. **Circadian Period**: This parameter determines the length of the circadian rhythm.
+2. **k Parameter**: The `k` parameter controls the shape of the cosine function. Higher values make it more symmetric, while lower values skew it.
+3. **Shape Factor of Gamma Function**: This factor influences the shape of the homeostatic sleep drive.
+
+You can customize these parameters to fine-tune the model and improve its accuracy.
+
+
+```r
+recosinor_obj <- function(params) {
+  
+  period <- params[1] # this controls tau
+  k <- params[2] # controls the shape of the cosine function (skew vs symmetric)
+  shape <- params[3] # controls the shape of the sleep drive function
+  
+  model <- recosinor.fit(cbt ~ time(hrs) + sleep(sw) + s(MovingAvgHR),
+                         cbt_data,
+                         tau = c(period),
+                         k = k, 
+                         shape = shape) 
+  
+  # Save the best model
+  assign("best_model", model, envir = .GlobalEnv)
+  
+  return(sum(residuals(model)^2))
+}
+
+library(optimx)
+# Use the optimx function 
+recosinor_opt <- optimx(c(24,10,3), 
+                        recosinor_obj, 
+                        method=c("L-BFGS-B","bobyqa"),
+                        control=list( 
+                          save.failures=TRUE, 
+                          trace=1),
+                        itnmax = 100,
+                        lower = c(23, -100,1), 
+                        upper = c(25, 100, 5) )
+
+params <- as.matrix(summary(recosinor_opt, order = value)[1, 1:3])
+recosinor_obj(params) # get the best model parameters
+summary(best_model)
+```
+
+The best model is the period of 23.2, k = 100 and shape = 4.4:
+
+```
+Family: gaussian 
+Link function: identity 
+
+Formula:
+cbt ~ s(MovingAvgHR) + ysin + ycos + sleep_response
+
+Parametric coefficients:
+                Estimate Std. Error  t value Pr(>|t|)    
+(Intercept)    36.787790   0.001850 19882.48   <2e-16 ***
+ysin           -0.386768   0.003131  -123.52   <2e-16 ***
+ycos            0.080496   0.002560    31.45   <2e-16 ***
+sleep_response -1.606467   0.022619   -71.02   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Approximate significance of smooth terms:
+                 edf Ref.df     F p-value    
+s(MovingAvgHR) 8.658  8.967 204.8  <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+R-sq.(adj) =  0.899   Deviance explained = 89.9%
+fREML = -3446.6  Scale est. = 0.013387  n = 4724
+
+Optimization Parameters:
+               p1  p2       p3
+L-BFGS-B 23.24315 100 4.401075
+```
+
+
+![Optimised Recosinor](example/example_plot_opt.png)
+
 
 ## Contributing
 
@@ -146,12 +226,5 @@ We extend our appreciation to the R community and all contributors for their inv
 
 ## Contact
 
-For inquiries, suggestions, or support, please contact the [recosinor team](https://github.com/orgs/your-organization/teams) or visit our [official website](https://your-website-url.com/).
-
-## Author
-
 - Phuc D. Nguyen
 - ducphuc.nguyen@flinders.edu.au
-```
-
-This updated README.md now includes the usage instructions and the provided example for the **recosinor** package. Make sure to replace the placeholders and URLs with your actual package information.
