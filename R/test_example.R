@@ -1,7 +1,7 @@
 
 data("cbt_data")
 
-
+head(cbt_data)
 
 
 model <- recosinor.fit(cbt ~ time(hrs) + sleep(sw) + s(MovingAvgHR),
