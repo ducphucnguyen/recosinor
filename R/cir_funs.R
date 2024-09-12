@@ -100,24 +100,50 @@ homonstatic_response <- function(opt_pars) {
 
 
 sleep_function <- function(data, shape=3, scale=2) {
+  ## Update this function to hanlde multi-sleep wake effects
 
   # Find the indices where the binary column switches from 0 to 1
   sleep_onset <- which(diff(data$sw) == 1)
 
   # Find the indices where the binary column switches from 1 to 0
   sleep_offset <- which(diff(data$sw) == -1)
+  
+  # Loop over multiple sleep episodes
+  for (i in 1:length(sleep_onset)) {
+    tsleep <- data$hrs[sleep_onset[i]]
+    twake <- data$hrs[sleep_offset[i]]
+    
+    index <- (data$hrs >= tsleep & data$hrs <= twake)
+    t <- data$hrs[index] - tsleep
+    data[[paste0("y_sleep_", i)]] <- 0
+    data[[paste0("y_sleep_", i)]][index] <- dgamma(t, 
+                                                         shape = shape, 
+                                                         scale = scale)
+    # adding wake function hre
+    index_w <-  data$hrs >= twake
+    t <- data$hrs[index_w] - twake
+    data[[paste0("y_wake_", i)]] <- 0
+    data[[paste0("y_wake_", i)]][index_w] <- dgamma(t, 
+                                                   shape = shape, 
+                                                   scale = scale)
+    
+  }
 
 
-  s_time <- data$hrs[sleep_onset:sleep_offset] - data$hrs[sleep_onset]
+  # s_time <- data$hrs[sleep_onset:sleep_offset] - data$hrs[sleep_onset]
+  # 
+  # data$s_response <- 0 # initialise s_response
+  # 
+  # data$s_response[sleep_onset:sleep_offset] <- dgamma(s_time, shape, scale)
 
-  data$s_response <- 0 # initialise s_response
-
-  data$s_response[sleep_onset:sleep_offset] <- dgamma(s_time, shape, scale)
-
-
-  return( data$s_response )
+  return( data )
 
 }
+
+
+
+
+
 
 
 
@@ -200,7 +226,7 @@ recosinor_func2 <- function(x, n_f=24, k=10) {
   interpolation <- splinefun(x_samples, freq_samples)
   freq <- interpolation(x)
 
-  dx <- rep( 30/60/60, length(x) )
+  dx <- rep( x[2], length(x) )
   x <- 2*pi*cumsum( freq * dx )/24
 
   #x <- 2 * pi * x/ period
@@ -213,6 +239,8 @@ recosinor_func2 <- function(x, n_f=24, k=10) {
 
     y_cos[i] <- cos(x[i] + y_cos[i-1]/k)
   }
+  y_sin[1:10] <- NA
+  y_cos[1:10] <- NA
 
   #data$ysin <- y_sin
   #data$ycos <- y_cos
