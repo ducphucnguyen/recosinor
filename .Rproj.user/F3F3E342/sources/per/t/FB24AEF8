@@ -1,27 +1,27 @@
 {
-    "id": "5D53B1E5",
-    "path": "U:/dev/recosinor/R/recosinor.fit.R",
-    "project_path": "R/recosinor.fit.R",
+    "id": "FB24AEF8",
+    "path": "U:/dev/recosinor/R/cir_funs.R",
+    "project_path": "R/cir_funs.R",
     "type": "r_source",
-    "hash": "3058428822",
+    "hash": "918538815",
     "contents": "",
     "dirty": false,
-    "created": 1695285411308.0,
+    "created": 1694946557707.0,
     "source_on_save": false,
-    "relative_order": 3,
+    "relative_order": 1,
     "properties": {
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "0,13",
-        "scrollLine": "0"
+        "cursorPosition": "202,4",
+        "scrollLine": "192"
     },
     "folds": "",
-    "lastKnownWriteTime": 1695285431,
+    "lastKnownWriteTime": 1695281213,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1695285431632,
+    "last_content_update": 1695281213345,
     "read_only": false,
     "read_only_alternatives": []
 }

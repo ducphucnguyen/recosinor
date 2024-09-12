@@ -1,27 +1,27 @@
 {
-    "id": "65A967F6",
-    "path": "U:/dev/recosinor/R/test_example.R",
-    "project_path": "R/test_example.R",
+    "id": "5D53B1E5",
+    "path": "U:/dev/recosinor/R/recosinor.fit.R",
+    "project_path": "R/recosinor.fit.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "3058428822",
     "contents": "",
     "dirty": false,
-    "created": 1694947846820.0,
+    "created": 1695285411308.0,
     "source_on_save": false,
-    "relative_order": 5,
+    "relative_order": 3,
     "properties": {
         "tempName": "Untitled1",
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "50,6",
-        "scrollLine": "34"
+        "cursorPosition": "15,2",
+        "scrollLine": "0"
     },
     "folds": "",
-    "lastKnownWriteTime": 1695350741,
+    "lastKnownWriteTime": 1695285431,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1695350741006,
+    "last_content_update": 1695285431632,
     "read_only": false,
     "read_only_alternatives": []
 }
