@@ -1,0 +1,23 @@
+Package: recosinor
+Type: Package
+Title: Recosinor - Recursive Cosinor for Circadian Rhythm Analysis
+Version: 0.1.0
+Author: Who wrote it
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: Package for analyzing circadian rhythms using recursive cosinor methods 
+    with sleep-wake cycle effects. Implements endogenous circadian oscillator and 
+    homeostatic sleep pressure models.
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports:
+    mgcv,
+    ggplot2,
+    pracma,
+    ggpubr,
+    dplyr,
+    readr,
+    lubridate,
+    imputeTS,
+    zoo,
+    optimx
